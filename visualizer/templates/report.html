@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Testrun report {% if path %} for path: {{path}} {% endif %}</title>
+    <style type="text/css">
+        body { margin: 0; padding: 0; font-family: Calibri, Helvetica, Arial, sans-serif;}
+        .ok { color: #428447; }
+        .skip { color: #366097; }
+        .error { color: #ee5757; }
+        .fail { color: #ee5757; }
+
+        .result pre {
+            color: #000;
+            background-color: #ee5757;
+            margin: 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .result {
+            padding: 0.5em 1em 0.5em 1em;
+            color: #2b81af;
+            background-color: #d2e0e6;
+            border-bottom: 1px solid #FFF;
+        }
+    </style>
+</head>
+<body>
+<div class="global result">
+    <div class="{{ global.status | slugify}}">
+        <h1>Test results</h1>
+        Ran: <strong>{{ global.count }}</strong> test{{ global.count|pluralize }} in {{ global.time|floatformat:3 }} seconds<br />
+        Success: <strong>{{ global.passed_count}} test{{ global.passed_count|pluralize }}</strong>
+        {% if  global.failures %} Failed: <strong>{{ global.failures}} test{{ global.failures|pluralize }}</strong>{% endif %}
+        {% if  global.errors%} Errors: <strong>{{ global.errors}} test{{ global.errors|pluralize }}</strong>{% endif %}
+        {% if  global.skipped%} Skipped: <strong>{{ global.skipped}} test{{ global.skipped|pluralize }}</strong>{% endif %}
+        {% if  global.expected_fails%} Expected Fails: <strong>{{ global.expected_fails}} test{{ global.expected_fails|pluralize }}</strong>{% endif %}
+        {% if  global.unexpected_successes%} Unexpected Successes: <strong>{{ global.unexpected_successes}} test{{ global.unexpected_successes|pluralize }}</strong>{% endif %}
+    </div>
+</div>
+{% for test, data in results.items %}
+    {% if test == 'global' %}
+
+    {% else %}
+    <div class="result">
+        <div class="{{ data.status | slugify}}">
+            <h1>{{ test }}</h1>
+            {% if data.status == 'error' %}
+                <p><code><pre>{{ data.error }}</pre></code></p>
+            {% else  %}{% if data.status == 'fail' %}
+                <p><code><pre>{{ data.fail }}</pre></code></p>
+            {% else  %}{% if data.status == 'skip' %}
+                <p><code><pre>{{ data.reason }}</pre></code></p>
+            {% endif %}{% endif %}{% endif %}
+        </div>
+    </div>
+    {% endif %}
+{% endfor %}
+</body>
+</html>
